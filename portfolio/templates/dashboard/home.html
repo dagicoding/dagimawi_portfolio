@@ -1,0 +1,128 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block topbar_title %}Overview{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1>Welcome back 👋</h1>
+    <p>Here's what's happening with your portfolio.</p>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(0,123,255,0.12);color:#007BFF"><i class="bi bi-images"></i></div>
+      <div class="stat-num grad-text">{{ total_works }}</div>
+      <div class="stat-label">Total Works</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(255,193,7,0.12);color:#ffc107"><i class="bi bi-inbox-fill"></i></div>
+      <div class="stat-num" style="color:#ffc107">{{ unread_messages }}</div>
+      <div class="stat-label">Unread Messages</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(0,212,80,0.12);color:#00d450"><i class="bi bi-chat-quote-fill"></i></div>
+      <div class="stat-num" style="color:#00d450">{{ total_testimonials }}</div>
+      <div class="stat-label">Testimonials</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(255,0,128,0.12);color:#ff0080"><i class="bi bi-megaphone-fill"></i></div>
+      <div class="stat-num" style="color:#ff0080">{{ total_announcements }}</div>
+      <div class="stat-label">Active Announcements</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Recent Messages -->
+  <div class="col-lg-6">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="bi bi-inbox me-2" style="color:#007BFF"></i>Recent Messages</div>
+        <a href="{% url 'portfolio:dashboard_messages' %}" class="btn-ghost" style="font-size:0.78rem;text-decoration:none;">View All</a>
+      </div>
+      <table class="dash-table">
+        <thead><tr><th>From</th><th>Subject</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          {% for msg in recent_messages %}
+          <tr>
+            <td>
+              <div style="font-weight:{% if not msg.is_read %}700{% else %}400{% endif %};font-size:0.85rem;">{{ msg.name }}</div>
+              <div style="color:var(--muted);font-size:0.75rem;">{{ msg.email }}</div>
+            </td>
+            <td style="font-size:0.82rem;">
+              {% if not msg.is_read %}<span class="badge-status badge-unread-msg me-1">New</span>{% endif %}
+              {{ msg.subject|truncatechars:30 }}
+            </td>
+            <td style="color:var(--muted);font-size:0.78rem;white-space:nowrap;">{{ msg.created_at|date:"M d" }}</td>
+            <td><a href="{% url 'portfolio:dashboard_message_detail' msg.pk %}" class="btn-sm-icon"><i class="bi bi-eye"></i></a></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No messages yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Works -->
+  <div class="col-lg-6">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="bi bi-images me-2" style="color:#007BFF"></i>Recent Works</div>
+        <a href="{% url 'portfolio:dashboard_works' %}" class="btn-ghost" style="font-size:0.78rem;text-decoration:none;">View All</a>
+      </div>
+      <table class="dash-table">
+        <thead><tr><th></th><th>Title</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for work in recent_works %}
+          <tr>
+            <td style="width:56px;">
+              {% if work.cover_image %}<img src="{{ work.cover_image.url }}" class="work-thumb" alt="">
+              {% else %}<div class="work-thumb-placeholder"><i class="bi bi-image"></i></div>{% endif %}
+            </td>
+            <td>
+              <div style="font-size:0.85rem;font-weight:600;">{{ work.title|truncatechars:28 }}</div>
+              <div style="color:var(--muted);font-size:0.75rem;">{{ work.category.name|default:"—" }}</div>
+            </td>
+            <td>
+              {% if work.featured %}<span class="badge-status badge-featured">Featured</span>{% endif %}
+              {% if not work.is_visible %}<span class="badge-status badge-inactive">Hidden</span>{% endif %}
+              {% if work.is_visible and not work.featured %}<span class="badge-status badge-active">Visible</span>{% endif %}
+            </td>
+            <td><a href="{% url 'portfolio:dashboard_work_edit' work.pk %}" class="btn-sm-icon"><i class="bi bi-pencil"></i></a></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No works yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="col-12">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="bi bi-lightning-fill me-2" style="color:#ffc107"></i>Quick Actions</div></div>
+      <div class="panel-body">
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="{% url 'portfolio:dashboard_work_add' %}" class="btn-grad" style="text-decoration:none;"><i class="bi bi-plus-lg me-1"></i> Add Work</a>
+          <a href="{% url 'portfolio:dashboard_profile' %}" class="btn-ghost" style="text-decoration:none;"><i class="bi bi-person me-1"></i> Edit Profile</a>
+          <a href="{% url 'portfolio:dashboard_messages' %}?filter=unread" class="btn-ghost" style="text-decoration:none;"><i class="bi bi-inbox me-1"></i> Unread Messages</a>
+          <a href="{% url 'portfolio:dashboard_announcements' %}" class="btn-ghost" style="text-decoration:none;"><i class="bi bi-megaphone me-1"></i> Announcements</a>
+          <a href="{% url 'portfolio:dashboard_contact_info' %}" class="btn-ghost" style="text-decoration:none;"><i class="bi bi-envelope me-1"></i> Contact Info & Email</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

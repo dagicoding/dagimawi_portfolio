@@ -1,0 +1,199 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 order-2 order-lg-1">
+        <div class="hero-greeting fade-up">👋 Welcome to my portfolio</div>
+        <h1 class="hero-name fade-up fade-up-delay-1">
+          Hey, I am<br>
+          <span>{% if profile %}{{ profile.name }}{% else %}Dagimawi Tarekegne{% endif %}</span>
+        </h1>
+        <div class="hero-typing-wrapper fade-up fade-up-delay-2">
+          I'm a <span id="typed-text" data-roles='{% if roles %}[{% for r in roles %}"{{ r.title }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% else %}["Graphic Designer","Video Editor","Content Creator"]{% endif %}'></span><span class="typed-cursor">|</span>
+        </div>
+        <p class="hero-description fade-up fade-up-delay-3">
+          {% if profile and profile.description %}{{ profile.description }}{% else %}Passionate about creating stunning visual experiences through innovative design, compelling video editing, and engaging content creation.{% endif %}
+        </p>
+        <div class="hero-buttons fade-up fade-up-delay-4">
+          <a href="{% url 'portfolio:works' %}" class="btn-gradient">View My Work <i class="bi bi-arrow-right ms-1"></i></a>
+          <a href="{% url 'portfolio:contact' %}" class="btn-outline-glow">Contact Me</a>
+          <a href="{% url 'portfolio:download_cv' %}" class="btn-outline-glow"><i class="bi bi-download me-1"></i> Download CV</a>
+        </div>
+        <div class="hero-social fade-up">
+          {% for link in social_links %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener" class="social-icon-link" title="{{ link.platform|capfirst }}">
+            {% if link.platform == 'facebook' %}<i class="bi bi-facebook"></i>
+            {% elif link.platform == 'instagram' %}<i class="bi bi-instagram"></i>
+            {% elif link.platform == 'tiktok' %}<i class="bi bi-tiktok"></i>
+            {% elif link.platform == 'telegram' %}<i class="bi bi-telegram"></i>
+            {% elif link.platform == 'linkedin' %}<i class="bi bi-linkedin"></i>
+            {% elif link.platform == 'behance' %}<i class="bi bi-behance"></i>
+            {% elif link.platform == 'youtube' %}<i class="bi bi-youtube"></i>
+            {% else %}<i class="bi bi-link-45deg"></i>{% endif %}
+          </a>
+          {% empty %}
+          <a href="#" class="social-icon-link"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon-link"><i class="bi bi-behance"></i></a>
+          <a href="#" class="social-icon-link"><i class="bi bi-youtube"></i></a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-lg-6 order-1 order-lg-2 text-center">
+        <div class="profile-image-wrapper d-inline-block fade-up">
+          {% if profile and profile.profile_image %}
+          <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}" class="profile-img">
+          {% else %}
+          <div class="profile-img-placeholder"><i class="bi bi-person-fill"></i></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+{% if stats %}
+<section class="py-5" style="background:var(--bg-secondary);border-top:1px solid var(--border-glass);border-bottom:1px solid var(--border-glass);">
+  <div class="container">
+    <div class="row g-4 text-center">
+      {% for stat in stats %}
+      <div class="col-6 col-md-3 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <div class="stat-card">
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.title }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ===== FEATURED WORKS ===== -->
+{% if featured_works %}
+<section class="py-section" style="padding:100px 0;">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">Portfolio</div>
+      <h2 class="section-title fade-up">Featured <span>Works</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="row g-4">
+      {% for work in featured_works %}
+      <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <a href="{% url 'portfolio:work_detail' work.pk %}" class="portfolio-card d-block text-decoration-none">
+          <div class="card-img-wrapper">
+            {% if work.cover_image %}
+            <img src="{{ work.cover_image.url }}" alt="{{ work.title }}" loading="lazy">
+            {% else %}
+            <div style="background:var(--gradient-blue-subtle);width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-image" style="font-size:3rem;color:var(--accent-blue)"></i>
+            </div>
+            {% endif %}
+            <div class="card-overlay">
+              <span class="btn-gradient px-4 py-2 rounded-pill">View Project</span>
+            </div>
+          </div>
+          <div class="card-body">
+            {% if work.category %}<div class="card-category">{{ work.category.name }}</div>{% endif %}
+            <div class="card-title">{{ work.title }}</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-5 fade-up">
+      <a href="{% url 'portfolio:works' %}" class="btn-outline-glow">View All Works <i class="bi bi-arrow-right ms-1"></i></a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ===== SKILLS ===== -->
+{% if skills %}
+<section style="padding:100px 0;background:var(--bg-secondary);border-top:1px solid var(--border-glass);">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5 fade-up">
+        <div class="section-label">Expertise</div>
+        <h2 class="section-title">My <span>Skills</span></h2>
+        <p style="color:var(--text-secondary);line-height:1.8;">I combine technical proficiency with creative vision to deliver results that exceed expectations.</p>
+        <a href="{% url 'portfolio:about' %}" class="btn-gradient mt-3 d-inline-flex align-items-center gap-2">Learn More <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="col-lg-7 fade-up fade-up-delay-2">
+        {% for skill in skills %}
+        <div class="skill-item">
+          <div class="skill-header">
+            <span class="skill-name">{% if skill.icon %}<i class="{{ skill.icon }} me-2" style="color:var(--accent-blue)"></i>{% endif %}{{ skill.name }}</span>
+            <span class="skill-percent">{{ skill.percentage }}%</span>
+          </div>
+          <div class="skill-bar">
+            <div class="skill-fill" data-width="{{ skill.percentage }}"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ===== TESTIMONIALS ===== -->
+{% if testimonials %}
+<section style="padding:100px 0;">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">Testimonials</div>
+      <h2 class="section-title fade-up">What Clients <span>Say</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="row g-4">
+      {% for t in testimonials %}
+      <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            {% for i in "12345" %}
+              {% if forloop.counter <= t.rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star" style="opacity:0.3"></i>{% endif %}
+            {% endfor %}
+          </div>
+          <p class="testimonial-text">"{{ t.review }}"</p>
+          <div class="testimonial-client">
+            {% if t.client_image %}
+            <img src="{{ t.client_image.url }}" alt="{{ t.client_name }}" class="testimonial-avatar">
+            {% else %}
+            <div class="testimonial-avatar-placeholder">{{ t.client_name|first|upper }}</div>
+            {% endif %}
+            <div>
+              <div class="testimonial-name">{{ t.client_name }}</div>
+              {% if t.company %}<div class="testimonial-company">{{ t.company }}</div>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ===== CTA ===== -->
+<section style="padding:100px 0;background:var(--bg-secondary);border-top:1px solid var(--border-glass);">
+  <div class="container text-center">
+    <div class="fade-up" style="max-width:600px;margin:0 auto;">
+      <div class="section-label">Let's Work Together</div>
+      <h2 class="section-title">Have a Project in <span>Mind?</span></h2>
+      <p style="color:var(--text-secondary);margin-bottom:32px;">Let's create something amazing together. I'm available for freelance projects and collaborations.</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="{% url 'portfolio:contact' %}" class="btn-gradient">Start a Project <i class="bi bi-arrow-right ms-1"></i></a>
+        <a href="{% url 'portfolio:works' %}" class="btn-outline-glow">View My Work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

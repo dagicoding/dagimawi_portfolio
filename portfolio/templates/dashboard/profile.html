@@ -1,0 +1,91 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Profile{% endblock %}
+{% block topbar_title %}Profile & Roles{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Profile & Roles</h1><p>Manage your homepage hero section content.</p></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="bi bi-person-circle me-2" style="color:#007BFF"></i>Profile Information</div></div>
+      <div class="panel-body">
+        <form method="post" enctype="multipart/form-data" action="{% url 'portfolio:dashboard_profile' %}">
+          {% csrf_token %}<input type="hidden" name="action" value="save_profile">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" class="form-control" value="{{ profile.name|default:'Dagimawi Tarekegne' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">About Me / Bio</label>
+            <textarea name="description" class="form-control" rows="5" placeholder="Write something about yourself...">{{ profile.description|default:'' }}</textarea>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Profile Photo</label>
+              {% if profile and profile.profile_image %}
+              <div class="mb-2"><img src="{{ profile.profile_image.url }}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid #007BFF;"></div>
+              {% endif %}
+              <input type="file" name="profile_image" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">CV / Resume (PDF)</label>
+              {% if profile and profile.cv_file %}<div class="mb-2" style="font-size:0.8rem;color:#00d450;"><i class="bi bi-check-circle me-1"></i>CV uploaded</div>{% endif %}
+              <input type="file" name="cv_file" class="form-control" accept=".pdf">
+            </div>
+          </div>
+          <button type="submit" class="btn-grad"><i class="bi bi-check-lg me-1"></i> Save Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="bi bi-type me-2" style="color:#007BFF"></i>Typing Roles</div>
+        <button class="btn-grad" onclick="openModal('addRoleModal')"><i class="bi bi-plus-lg"></i></button>
+      </div>
+      <table class="dash-table">
+        <thead><tr><th>#</th><th>Role Title</th><th></th></tr></thead>
+        <tbody>
+          {% for role in roles %}
+          <tr>
+            <td style="color:var(--muted);font-size:0.78rem;">{{ forloop.counter }}</td>
+            <td style="font-weight:600;font-size:0.875rem;">{{ role.title }}</td>
+            <td>
+              <form method="post" action="{% url 'portfolio:dashboard_profile' %}" style="display:inline">
+                {% csrf_token %}<input type="hidden" name="action" value="delete_role"><input type="hidden" name="role_id" value="{{ role.id }}">
+                <button type="submit" class="btn-danger-soft" onclick="return confirm('Delete this role?')"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:20px;">No roles yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Role Modal -->
+<div id="addRoleModal" class="modal-dash">
+  <div class="modal-box">
+    <div class="modal-header-d">
+      <div class="modal-title-d">Add Typing Role</div>
+      <button onclick="closeModal('addRoleModal')" class="btn-sm-icon"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <form method="post" action="{% url 'portfolio:dashboard_profile' %}">
+      {% csrf_token %}<input type="hidden" name="action" value="add_role">
+      <div class="mb-3">
+        <label class="form-label">Role Title</label>
+        <input type="text" name="role_title" class="form-control" placeholder="e.g. Graphic Designer" required>
+      </div>
+      <div class="d-flex gap-2 justify-content-end">
+        <button type="button" onclick="closeModal('addRoleModal')" class="btn-ghost">Cancel</button>
+        <button type="submit" class="btn-grad">Add Role</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

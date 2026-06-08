@@ -1,0 +1,41 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block title %}{{ hero_title }} | Dagimawi Tarekegne{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container text-center">
+    <div class="section-label">Portfolio</div>
+    <h1 class="section-title fade-up"><span>{{ hero_title }}</span></h1>
+    <p class="fade-up" style="color:var(--text-secondary);max-width:500px;margin:0 auto;">{{ hero_subtitle }}</p>
+  </div>
+</section>
+
+<section style="padding:0 0 100px;">
+  <div class="container">
+    <div class="row g-4">
+      {% for work in works %}
+      <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <a href="{% url 'portfolio:work_detail' work.pk %}" class="portfolio-card d-block text-decoration-none">
+          <div class="card-img-wrapper">
+            {% if work.cover_image %}<img src="{{ work.cover_image.url }}" alt="{{ work.title }}" loading="lazy">
+            {% else %}<div style="background:var(--gradient-blue-subtle);width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><i class="bi bi-image" style="font-size:3rem;color:var(--accent-blue)"></i></div>{% endif %}
+            <div class="card-overlay"><span class="btn-gradient px-4 py-2 rounded-pill">View Project</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{{ work.title }}</div>
+            <div style="color:var(--text-muted);font-size:0.8rem;margin-top:4px;">{{ work.created_at|date:"M Y" }}</div>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5">
+        <i class="bi bi-grid" style="font-size:4rem;color:var(--text-muted)"></i>
+        <p style="color:var(--text-muted);margin-top:16px;">No works in this category yet.</p>
+        <a href="{% url 'portfolio:works' %}" class="btn-outline-glow mt-3">View All Works</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

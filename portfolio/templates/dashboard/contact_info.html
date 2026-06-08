@@ -1,0 +1,65 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Contact Info{% endblock %}
+{% block topbar_title %}Contact Information & Email{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Contact Information</h1><p>This email address also receives all contact form notifications.</p></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="bi bi-envelope-fill me-2" style="color:#007BFF"></i>Contact Details</div></div>
+      <div class="panel-body">
+        <form method="post" action="{% url 'portfolio:dashboard_contact_info' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Email Address <span style="color:#007BFF">*</span></label>
+            <input type="email" name="email" class="form-control" value="{{ info.email|default:'' }}" required placeholder="dagimawi@example.com">
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;"><i class="bi bi-info-circle me-1"></i>Contact form submissions will be sent to this address.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="text" name="phone" class="form-control" value="{{ info.phone|default:'' }}" placeholder="+251 900 000 000">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address / Location</label>
+            <textarea name="address" class="form-control" rows="3" placeholder="Addis Ababa, Ethiopia">{{ info.address|default:'' }}</textarea>
+          </div>
+          <button type="submit" class="btn-grad"><i class="bi bi-check-lg me-1"></i> Save Contact Info</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="panel mb-3">
+      <div class="panel-header"><div class="panel-title"><i class="bi bi-send-fill me-2" style="color:#00D4FF"></i>Email Notification Setup</div></div>
+      <div class="panel-body">
+        <div style="font-size:0.85rem;color:var(--sub);line-height:1.8;">
+          <p style="margin-bottom:12px;">When someone submits the contact form, an email is automatically sent to the address above.</p>
+          <div style="background:rgba(0,123,255,0.08);border:1px solid rgba(0,123,255,0.2);border-radius:10px;padding:14px;margin-bottom:16px;">
+            <div style="font-weight:700;color:#007BFF;margin-bottom:8px;font-size:0.82rem;"><i class="bi bi-gear me-1"></i>To enable real email delivery:</div>
+            <ol style="padding-left:16px;font-size:0.8rem;line-height:2;">
+              <li>Open <code style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;">settings.py</code></li>
+              <li>Uncomment the <strong>Gmail SMTP</strong> block</li>
+              <li>Set your Gmail address and App Password</li>
+              <li>Restart the server</li>
+            </ol>
+          </div>
+          <div style="background:rgba(0,212,80,0.08);border:1px solid rgba(0,212,80,0.2);border-radius:10px;padding:14px;">
+            <div style="font-weight:700;color:#00d450;margin-bottom:6px;font-size:0.82rem;"><i class="bi bi-check-circle me-1"></i>Currently in dev mode</div>
+            <div style="font-size:0.78rem;">Emails are printed to the terminal console. All contact messages are still saved to the database and visible in your Messages inbox.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="bi bi-inbox me-2" style="color:#ffc107"></i>Messages Inbox</div></div>
+      <div class="panel-body" style="text-align:center;">
+        <div style="font-size:2rem;font-weight:800;" class="grad-text">{{ unread_messages_count }}</div>
+        <div style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">Unread Messages</div>
+        <a href="{% url 'portfolio:dashboard_messages' %}" class="btn-grad" style="text-decoration:none;display:inline-block;"><i class="bi bi-inbox me-1"></i> View All Messages</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

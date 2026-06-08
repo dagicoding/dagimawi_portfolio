@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page_title }} | Dagimawi Tarekegne{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Dagimawi Tarekegne - Professional Graphic Designer, Video Editor & Content Creator{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{% static 'portfolio/css/main.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'portfolio:home' %}">Dagimawi<span style="opacity:0.5">.</span></a>
+    <div class="d-flex align-items-center gap-2 order-lg-last">
+      <button class="p-3 theme-toggle" id="themeToggle" title="Toggle theme"><i class="bi bi-sun-fill"></i></button>
+      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto gap-1">
+        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'portfolio:home' %}">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Works</a>
+          <ul class="dropdown-menu" style="background:var(--bg-secondary);border:1px solid var(--border-glass);border-radius:var(--radius);">
+            <li><a class="dropdown-item" style="color:var(--text-secondary);padding:10px 20px;" href="{% url 'portfolio:works' %}">All Works</a></li>
+            <li><a class="dropdown-item" style="color:var(--text-secondary);padding:10px 20px;" href="{% url 'portfolio:poster_design' %}">Poster Design</a></li>
+            <li><a class="dropdown-item" style="color:var(--text-secondary);padding:10px 20px;" href="{% url 'portfolio:thumbnail_design' %}">Thumbnail Design</a></li>
+            <li><a class="dropdown-item" style="color:var(--text-secondary);padding:10px 20px;" href="{% url 'portfolio:logo_design' %}">Logo Design</a></li>
+            <li><a class="dropdown-item" style="color:var(--text-secondary);padding:10px 20px;" href="{% url 'portfolio:video_editing' %}">Video Editing</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'portfolio:about' %}">About</a></li>
+        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'portfolio:contact' %}">Contact</a></li>
+      </ul>
+      <a href="{% url 'portfolio:contact' %}" class="btn-gradient d-none d-lg-inline-flex align-items-center gap-2">Hire Me <i class="bi bi-arrow-right"></i></a>
+    </div>
+  </div>
+</nav>
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="footer-brand">Dagimawi.</div>
+        <p class="footer-desc">Crafting visual experiences through design, video, and creative content that leave a lasting impression.</p>
+        <div class="d-flex gap-2 mt-3">
+          {% for link in social_links %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener" class="social-icon-link">
+            {% if link.platform == 'facebook' %}<i class="bi bi-facebook"></i>
+            {% elif link.platform == 'instagram' %}<i class="bi bi-instagram"></i>
+            {% elif link.platform == 'tiktok' %}<i class="bi bi-tiktok"></i>
+            {% elif link.platform == 'telegram' %}<i class="bi bi-telegram"></i>
+            {% elif link.platform == 'linkedin' %}<i class="bi bi-linkedin"></i>
+            {% elif link.platform == 'behance' %}<i class="bi bi-behance"></i>
+            {% elif link.platform == 'youtube' %}<i class="bi bi-youtube"></i>
+            {% else %}<i class="bi bi-link-45deg"></i>{% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="footer-heading">Navigation</div>
+        <a href="{% url 'portfolio:home' %}" class="footer-link">Home</a>
+        <a href="{% url 'portfolio:works' %}" class="footer-link">Works</a>
+        <a href="{% url 'portfolio:about' %}" class="footer-link">About</a>
+        <a href="{% url 'portfolio:contact' %}" class="footer-link">Contact</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="footer-heading">Services</div>
+        <a href="{% url 'portfolio:poster_design' %}" class="footer-link">Poster Design</a>
+        <a href="{% url 'portfolio:thumbnail_design' %}" class="footer-link">Thumbnails</a>
+        <a href="{% url 'portfolio:logo_design' %}" class="footer-link">Logo Design</a>
+        <a href="{% url 'portfolio:video_editing' %}" class="footer-link">Video Editing</a>
+      </div>
+      <div class="col-lg-4">
+        <div class="footer-heading">Get In Touch</div>
+        {% if contact_info %}
+          {% if contact_info.email %}<div class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-envelope" style="color:var(--accent-blue)"></i><a href="mailto:{{ contact_info.email }}" class="footer-link mb-0">{{ contact_info.email }}</a></div>{% endif %}
+          {% if contact_info.phone %}<div class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-telephone" style="color:var(--accent-blue)"></i><span class="footer-link mb-0">{{ contact_info.phone }}</span></div>{% endif %}
+          {% if contact_info.address %}<div class="d-flex align-items-center gap-2"><i class="bi bi-geo-alt" style="color:var(--accent-blue)"></i><span class="footer-link mb-0">{{ contact_info.address }}</span></div>{% endif %}
+        {% endif %}
+        <a href="{% url 'portfolio:download_cv' %}" class="btn-outline-glow mt-4 d-inline-flex align-items-center gap-2"><i class="bi bi-download"></i> Download CV</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; {% now "Y" %} Dagimawi Tarekegne. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<div id="lightbox-overlay" class="lightbox-overlay">
+  <button class="lightbox-close"><i class="bi bi-x-lg"></i></button>
+  <button class="lightbox-nav lightbox-prev"><i class="bi bi-chevron-left"></i></button>
+  <img class="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-next"><i class="bi bi-chevron-right"></i></button>
+</div>
+
+<div id="video-modal-overlay" class="video-modal-overlay">
+
+    <button class="lightbox-close">
+        <i class="bi bi-x-lg"></i>
+    </button>
+
+    <div class="video-modal-content"></div>
+
+</div>
+
+{% if active_announcement %}
+<div id="announcement-popup" class="announcement-popup" data-id="{{ active_announcement.id }}">
+  <div class="announcement-inner">
+    <div class="announcement-glow"></div>
+    <button class="announcement-close"><i class="bi bi-x"></i></button>
+    <div class="announcement-type-badge {{ active_announcement.type }}">
+      {% if active_announcement.type == 'info' %}<i class="bi bi-info-circle"></i> Info
+      {% elif active_announcement.type == 'success' %}<i class="bi bi-check-circle"></i> Update
+      {% elif active_announcement.type == 'warning' %}<i class="bi bi-exclamation-triangle"></i> Notice
+      {% else %}<i class="bi bi-star"></i> Promotion{% endif %}
+    </div>
+    <div class="announcement-title">{{ active_announcement.title }}</div>
+    <div class="announcement-message">{{ active_announcement.message }}</div>
+    {% if active_announcement.button_text and active_announcement.button_link %}
+    <a href="{{ active_announcement.button_link }}" class="btn-gradient d-inline-block">{{ active_announcement.button_text }} <i class="bi bi-arrow-right ms-1"></i></a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'portfolio/js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

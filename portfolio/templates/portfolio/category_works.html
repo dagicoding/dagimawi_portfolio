@@ -1,0 +1,32 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block title %}{{ category.name }} | Dagimawi Tarekegne{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container text-center">
+    <div class="section-label">Portfolio</div>
+    <h1 class="section-title fade-up"><span>{{ category.name }}</span></h1>
+  </div>
+</section>
+<section style="padding:0 0 100px;">
+  <div class="container">
+    <div class="row g-4">
+      {% for work in works %}
+      <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <a href="{% url 'portfolio:work_detail' work.pk %}" class="portfolio-card d-block text-decoration-none">
+          <div class="card-img-wrapper">
+            {% if work.cover_image %}<img src="{{ work.cover_image.url }}" alt="{{ work.title }}" loading="lazy">{% endif %}
+            <div class="card-overlay"><span class="btn-gradient px-4 py-2 rounded-pill">View Project</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{{ work.title }}</div>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5"><p style="color:var(--text-muted)">No works in this category yet.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

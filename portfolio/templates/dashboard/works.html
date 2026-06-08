@@ -1,0 +1,50 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Works{% endblock %}
+{% block topbar_title %}Portfolio Works{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Works</h1><p>Manage your portfolio projects.</p></div>
+  <a href="{% url 'portfolio:dashboard_work_add' %}" class="btn-grad" style="text-decoration:none;"><i class="bi bi-plus-lg me-1"></i> Add Work</a>
+</div>
+<div class="panel">
+  <table class="dash-table">
+    <thead><tr><th></th><th>Title</th><th>Category</th><th>Featured</th><th>Visible</th><th>Date</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for work in works %}
+      <tr>
+        <td style="width:56px;">
+          {% if work.cover_image %}<img src="{{ work.cover_image.url }}" class="work-thumb" alt="">
+          {% else %}<div class="work-thumb-placeholder"><i class="bi bi-image"></i></div>{% endif %}
+        </td>
+        <td><div style="font-weight:600;font-size:0.875rem;">{{ work.title }}</div><div style="color:var(--muted);font-size:0.75rem;">{{ work.description|truncatechars:40 }}</div></td>
+        <td style="font-size:0.82rem;color:var(--sub);">{{ work.category.name|default:"—" }}</td>
+        <td>
+          <form method="post" action="{% url 'portfolio:dashboard_work_toggle' work.pk %}">
+            {% csrf_token %}<input type="hidden" name="field" value="featured">
+            <label class="toggle-switch"><input type="checkbox" {% if work.featured %}checked{% endif %} onchange="this.form.submit()"><span class="toggle-slider"></span></label>
+          </form>
+        </td>
+        <td>
+          <form method="post" action="{% url 'portfolio:dashboard_work_toggle' work.pk %}">
+            {% csrf_token %}<input type="hidden" name="field" value="visible">
+            <label class="toggle-switch"><input type="checkbox" {% if work.is_visible %}checked{% endif %} onchange="this.form.submit()"><span class="toggle-slider"></span></label>
+          </form>
+        </td>
+        <td style="color:var(--muted);font-size:0.78rem;">{{ work.created_at|date:"M d, Y" }}</td>
+        <td>
+          <div class="d-flex gap-1">
+            <a href="{% url 'portfolio:work_detail' work.pk %}" class="btn-sm-icon" target="_blank" title="Preview"><i class="bi bi-eye"></i></a>
+            <a href="{% url 'portfolio:dashboard_work_edit' work.pk %}" class="btn-sm-icon" title="Edit"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'portfolio:dashboard_work_delete' work.pk %}" class="btn-sm-icon" style="border-color:rgba(220,53,69,0.3);color:#dc3545;" title="Delete" onclick="return confirm('Delete this work?')"><i class="bi bi-trash"></i></a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px;">
+        No works yet. <a href="{% url 'portfolio:dashboard_work_add' %}" style="color:#007BFF;">Add your first work →</a>
+      </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

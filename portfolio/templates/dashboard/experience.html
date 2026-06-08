@@ -1,0 +1,46 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Experience{% endblock %}
+{% block topbar_title %}Experience{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Experience</h1><p>Work history timeline shown on your About page.</p></div>
+  <button class="btn-grad" onclick="openModal('addExperienceModal')"><i class="bi bi-plus-lg me-1"></i> Add Experience</button>
+</div>
+<div class="panel">
+  <table class="dash-table">
+    <thead><tr><th>Title</th><th>Company</th><th>Period</th><th>Current</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for exp in experiences %}
+      <tr>
+        <td style="font-weight:600;font-size:0.875rem;">{{ exp.title }}</td>
+        <td style="color:var(--sub);font-size:0.85rem;">{{ exp.company }}</td>
+        <td style="color:var(--muted);font-size:0.78rem;">{{ exp.start_date|date:"M Y" }} — {% if exp.is_current %}Present{% elif exp.end_date %}{{ exp.end_date|date:"M Y" }}{% endif %}</td>
+        <td>{% if exp.is_current %}<span class="badge-status badge-active">Current</span>{% endif %}</td>
+        <td>
+          <form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ exp.id }}"><button type="submit" class="btn-sm-icon" style="border-color:rgba(220,53,69,0.3);color:#dc3545;" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></button></form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:40px;">No experience entries yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="addExperienceModal" class="modal-dash"><div class="modal-box">
+  <div class="modal-header-d"><div class="modal-title-d">Add Experience</div><button onclick="closeModal('addExperienceModal')" class="btn-sm-icon"><i class="bi bi-x-lg"></i></button></div>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="add">
+    <div class="row g-3 mb-3">
+      <div class="col-md-6"><label class="form-label">Job Title</label><input type="text" name="title" class="form-control" required placeholder="e.g. Graphic Designer"></div>
+      <div class="col-md-6"><label class="form-label">Company / Client</label><input type="text" name="company" class="form-control" required placeholder="e.g. Freelance"></div>
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6"><label class="form-label">Start Date</label><input type="date" name="start_date" class="form-control" required></div>
+      <div class="col-md-6"><label class="form-label">End Date</label><input type="date" name="end_date" class="form-control"><div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Leave blank if current</div></div>
+    </div>
+    <div class="mb-3 d-flex align-items-center gap-2"><label class="toggle-switch"><input type="checkbox" name="is_current"><span class="toggle-slider"></span></label><span style="font-size:0.875rem;">This is my current position</span></div>
+    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3" placeholder="Brief description of your role..."></textarea></div>
+    <div class="d-flex gap-2 justify-content-end"><button type="button" onclick="closeModal('addExperienceModal')" class="btn-ghost">Cancel</button><button type="submit" class="btn-grad">Add</button></div>
+  </form>
+</div></div>
+{% endblock %}

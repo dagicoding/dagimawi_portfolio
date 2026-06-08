@@ -1,0 +1,50 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Announcements{% endblock %}
+{% block topbar_title %}Announcements{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Announcements</h1><p>Manage popup announcements shown on your website.</p></div>
+  <button class="btn-grad" onclick="openModal('addAnnouncementModal')"><i class="bi bi-plus-lg me-1"></i> New Announcement</button>
+</div>
+<div class="panel">
+  <table class="dash-table">
+    <thead><tr><th>Title</th><th>Type</th><th>Message</th><th>Active</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for a in announcements %}
+      <tr>
+        <td style="font-weight:600;font-size:0.875rem;">{{ a.title }}</td>
+        <td><span class="badge-status {% if a.type == 'info' %}badge-featured{% elif a.type == 'success' %}badge-active{% elif a.type == 'promo' %}badge-unread-msg{% else %}badge-inactive{% endif %}">{{ a.get_type_display }}</span></td>
+        <td style="color:var(--sub);font-size:0.82rem;">{{ a.message|truncatechars:50 }}</td>
+        <td>
+          <form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="{{ a.id }}">
+            <label class="toggle-switch"><input type="checkbox" {% if a.is_active %}checked{% endif %} onchange="this.form.submit()"><span class="toggle-slider"></span></label>
+          </form>
+        </td>
+        <td>
+          <form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ a.id }}"><button type="submit" class="btn-sm-icon" style="border-color:rgba(220,53,69,0.3);color:#dc3545;" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></button></form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:40px;">No announcements yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="addAnnouncementModal" class="modal-dash"><div class="modal-box">
+  <div class="modal-header-d"><div class="modal-title-d">New Announcement</div><button onclick="closeModal('addAnnouncementModal')" class="btn-sm-icon"><i class="bi bi-x-lg"></i></button></div>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="add">
+    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required placeholder="e.g. New Services Available"></div>
+    <div class="mb-3"><label class="form-label">Message</label><textarea name="message" class="form-control" rows="3" required></textarea></div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6"><label class="form-label">Type</label>
+        <select name="type" class="form-select"><option value="info">Information</option><option value="success">Success</option><option value="warning">Warning</option><option value="promo">Promotion</option></select>
+      </div>
+      <div class="col-md-6"><label class="form-label">Button Text</label><input type="text" name="button_text" class="form-control" placeholder="Learn More"></div>
+    </div>
+    <div class="mb-3"><label class="form-label">Button Link</label><input type="url" name="button_link" class="form-control" placeholder="https://..."></div>
+    <div class="mb-3 d-flex align-items-center gap-2"><label class="toggle-switch"><input type="checkbox" name="is_active" checked><span class="toggle-slider"></span></label><span style="font-size:0.875rem;">Activate immediately</span></div>
+    <div class="d-flex gap-2 justify-content-end"><button type="button" onclick="closeModal('addAnnouncementModal')" class="btn-ghost">Cancel</button><button type="submit" class="btn-grad">Create</button></div>
+  </form>
+</div></div>
+{% endblock %}

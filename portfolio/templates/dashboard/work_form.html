@@ -1,0 +1,100 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{% if mode == 'edit' %}Edit Work{% else %}Add Work{% endif %}{% endblock %}
+{% block topbar_title %}{% if mode == 'edit' %}Edit Work{% else %}Add New Work{% endif %}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>{% if mode == 'edit' %}Edit: {{ work.title }}{% else %}Add New Work{% endif %}</h1>
+    <p>{% if mode == 'edit' %}Update this portfolio project.{% else %}Add a new project to your portfolio.{% endif %}</p>
+  </div>
+  <a href="{% url 'portfolio:dashboard_works' %}" class="btn-ghost" style="text-decoration:none;"><i class="bi bi-arrow-left me-1"></i> Back</a>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="{% if mode == 'edit' %}{% url 'portfolio:dashboard_work_edit' work.pk %}{% else %}{% url 'portfolio:dashboard_work_add' %}{% endif %}">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="panel mb-3">
+        <div class="panel-header"><div class="panel-title">Work Details</div></div>
+        <div class="panel-body">
+          <div class="mb-3">
+            <label class="form-label">Title *</label>
+            <input type="text" name="title" class="form-control" value="{{ work.title|default:'' }}" required placeholder="e.g. Brand Identity for XYZ Co.">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="4" placeholder="Describe this project...">{{ work.description|default:'' }}</textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select name="category" class="form-select">
+              <option value="">— No Category —</option>
+              {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if work and work.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">YouTube / Vimeo URL (optional)</label>
+            <input type="url" name="video_url" class="form-control" value="{{ work.video_url|default:'' }}" placeholder="https://youtube.com/watch?v=...">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Gallery Images</div></div>
+        <div class="panel-body">
+          {% if mode == 'edit' and work.images.all %}
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            {% for img in work.images.all %}
+            <div style="position:relative;">
+              <img src="{{ img.image.url }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <label class="form-label">Add Gallery Images</label>
+          <input type="file" name="gallery_images" class="form-control" multiple accept="image/*">
+          <div style="color:var(--muted);font-size:0.75rem;margin-top:6px;">You can select multiple images at once.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="panel mb-3">
+        <div class="panel-header"><div class="panel-title">Cover Image</div></div>
+        <div class="panel-body">
+          {% if mode == 'edit' and work.cover_image %}
+          <img src="{{ work.cover_image.url }}" style="width:100%;border-radius:8px;margin-bottom:12px;border:1px solid var(--border);">
+          {% endif %}
+          <input type="file" name="cover_image" class="form-control" accept="image/*" {% if mode == 'add' %}required{% endif %}>
+        </div>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><div class="panel-title">Video File (optional)</div></div>
+        <div class="panel-body">
+          {% if mode == 'edit' and work.video_file %}<div style="font-size:0.8rem;color:#00d450;margin-bottom:8px;"><i class="bi bi-check-circle me-1"></i>Video uploaded</div>{% endif %}
+          <input type="file" name="video_file" class="form-control" accept="video/*">
+        </div>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><div class="panel-title">Visibility</div></div>
+        <div class="panel-body">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <label style="font-size:0.875rem;margin:0;">Featured on Homepage</label>
+            <label class="toggle-switch"><input type="checkbox" name="featured" {% if work and work.featured %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <label style="font-size:0.875rem;margin:0;">Visible on Site</label>
+            <label class="toggle-switch"><input type="checkbox" name="is_visible" {% if not work or work.is_visible %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-grad w-100"><i class="bi bi-check-lg me-1"></i> {% if mode == 'edit' %}Save Changes{% else %}Add Work{% endif %}</button>
+    </div>
+  </div>
+</form>
+{% endblock %}

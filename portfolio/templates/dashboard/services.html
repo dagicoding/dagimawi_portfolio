@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Services{% endblock %}
+{% block topbar_title %}Services{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Services</h1><p>Services shown on your About page.</p></div>
+  <button class="btn-grad" onclick="openModal('addServiceModal')"><i class="bi bi-plus-lg me-1"></i> Add Service</button>
+</div>
+<div class="panel">
+  <table class="dash-table">
+    <thead><tr><th>Icon</th><th>Title</th><th>Description</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for svc in services %}
+      <tr>
+        <td><i class="{{ svc.icon|default:'bi bi-star' }}" style="font-size:1.2rem;color:#007BFF"></i></td>
+        <td style="font-weight:600;font-size:0.875rem;">{{ svc.title }}</td>
+        <td style="color:var(--sub);font-size:0.82rem;">{{ svc.description|truncatechars:60 }}</td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn-sm-icon" onclick="fillEditModal('editServiceModal',{id:'{{ svc.id }}',title:'{{ svc.title|escapejs }}',description:'{{ svc.description|escapejs }}',icon:'{{ svc.icon }}'})"><i class="bi bi-pencil"></i></button>
+            <form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ svc.id }}"><button type="submit" class="btn-sm-icon" style="border-color:rgba(220,53,69,0.3);color:#dc3545;" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></button></form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:40px;">No services yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="addServiceModal" class="modal-dash"><div class="modal-box">
+  <div class="modal-header-d"><div class="modal-title-d">Add Service</div><button onclick="closeModal('addServiceModal')" class="btn-sm-icon"><i class="bi bi-x-lg"></i></button></div>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="add">
+    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required></div>
+    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Icon (Bootstrap Icons class)</label><input type="text" name="icon" class="form-control" placeholder="e.g. bi bi-brush"></div>
+    <div class="d-flex gap-2 justify-content-end"><button type="button" onclick="closeModal('addServiceModal')" class="btn-ghost">Cancel</button><button type="submit" class="btn-grad">Add</button></div>
+  </form>
+</div></div>
+
+<div id="editServiceModal" class="modal-dash"><div class="modal-box">
+  <div class="modal-header-d"><div class="modal-title-d">Edit Service</div><button onclick="closeModal('editServiceModal')" class="btn-sm-icon"><i class="bi bi-x-lg"></i></button></div>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="edit"><input type="hidden" name="id" value="">
+    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required></div>
+    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Icon</label><input type="text" name="icon" class="form-control"></div>
+    <div class="d-flex gap-2 justify-content-end"><button type="button" onclick="closeModal('editServiceModal')" class="btn-ghost">Cancel</button><button type="submit" class="btn-grad">Save</button></div>
+  </form>
+</div></div>
+{% endblock %}

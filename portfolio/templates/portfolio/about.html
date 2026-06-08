@@ -1,0 +1,138 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container text-center">
+    <div class="section-label">About Me</div>
+    <h1 class="section-title fade-up">The Creative <span>Behind the Work</span></h1>
+  </div>
+</section>
+
+<!-- PROFILE -->
+<section style="padding:0 0 80px;">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5 text-center fade-up">
+        <div class="profile-image-wrapper d-inline-block">
+          {% if profile and profile.profile_image %}
+          <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}" class="profile-img">
+          {% else %}
+          <div class="profile-img-placeholder"><i class="bi bi-person-fill"></i></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-7 fade-up fade-up-delay-2">
+        <div class="section-label">Biography</div>
+        <h2 class="section-title">{% if profile %}{{ profile.name }}{% else %}Dagimawi Tarekegne{% endif %}</h2>
+        <p style="color:var(--text-secondary);line-height:1.9;margin-bottom:24px;">
+          {% if profile and profile.description %}{{ profile.description }}{% else %}I'm a passionate graphic designer, video editor, and content creator with a keen eye for detail and a love for visual storytelling. My work spans from brand identity and poster design to cinematic video edits and engaging content for digital platforms.{% endif %}
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'portfolio:contact' %}" class="btn-gradient">Hire Me <i class="bi bi-arrow-right ms-1"></i></a>
+          <a href="{% url 'portfolio:download_cv' %}" class="btn-outline-glow"><i class="bi bi-download me-1"></i> Download CV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+{% if skills %}
+<section style="padding:80px 0;background:var(--bg-secondary);border-top:1px solid var(--border-glass);border-bottom:1px solid var(--border-glass);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">Skills</div>
+      <h2 class="section-title fade-up">My <span>Expertise</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="row g-4">
+      {% for skill in skills %}
+      <div class="col-md-6 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <div class="skill-item">
+          <div class="skill-header">
+            <span class="skill-name">{% if skill.icon %}<i class="{{ skill.icon }} me-2" style="color:var(--accent-blue)"></i>{% endif %}{{ skill.name }}</span>
+            <span class="skill-percent">{{ skill.percentage }}%</span>
+          </div>
+          <div class="skill-bar">
+            <div class="skill-fill" data-width="{{ skill.percentage }}"></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- SERVICES -->
+{% if services %}
+<section style="padding:80px 0;">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">Services</div>
+      <h2 class="section-title fade-up">What I <span>Offer</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="row g-4">
+      {% for svc in services %}
+      <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <div class="glass-card p-4 h-100">
+          {% if svc.icon %}<div style="width:52px;height:52px;border-radius:var(--radius);background:var(--gradient-blue-subtle);border:1px solid rgba(0,123,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;"><i class="{{ svc.icon }}" style="font-size:1.3rem;color:var(--accent-blue)"></i></div>{% endif %}
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px;">{{ svc.title }}</h3>
+          <p style="color:var(--text-secondary);font-size:0.88rem;line-height:1.7;">{{ svc.description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- EXPERIENCE -->
+{% if experiences %}
+<section style="padding:80px 0;background:var(--bg-secondary);border-top:1px solid var(--border-glass);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">Experience</div>
+      <h2 class="section-title fade-up">My <span>Journey</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8 fade-up">
+        {% for exp in experiences %}
+        <div class="experience-item">
+          <div class="experience-dot"></div>
+          <div class="experience-period">
+            {{ exp.start_date|date:"M Y" }} — {% if exp.is_current %}Present{% elif exp.end_date %}{{ exp.end_date|date:"M Y" }}{% endif %}
+          </div>
+          <div class="experience-title">{{ exp.title }}</div>
+          <div class="experience-company">{{ exp.company }}</div>
+          {% if exp.description %}<div class="experience-desc">{{ exp.description }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- STATS -->
+{% if stats %}
+<section style="padding:80px 0;">
+  <div class="container">
+    <div class="row g-4 text-center">
+      {% for stat in stats %}
+      <div class="col-6 col-md-3 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <div class="stat-card">
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.title }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

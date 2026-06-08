@@ -1,0 +1,46 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Messages{% endblock %}
+{% block topbar_title %}Contact Messages{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Messages</h1><p>Contact form submissions from your website.</p></div>
+  <div class="d-flex gap-2">
+    <a href="?filter=all" class="btn-ghost {% if filter == 'all' %}active{% endif %}" style="text-decoration:none;{% if filter == 'all' %}border-color:#007BFF;color:#007BFF;{% endif %}">All</a>
+    <a href="?filter=unread" class="btn-ghost" style="text-decoration:none;{% if filter == 'unread' %}border-color:#ffc107;color:#ffc107;{% endif %}">Unread</a>
+    <a href="?filter=archived" class="btn-ghost" style="text-decoration:none;{% if filter == 'archived' %}border-color:var(--muted);color:var(--muted);{% endif %}">Archived</a>
+  </div>
+</div>
+<div class="panel">
+  <table class="dash-table">
+    <thead><tr><th>From</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for msg in messages_list %}
+      <tr>
+        <td>
+          <div style="font-weight:{% if not msg.is_read %}700{% else %}500{% endif %};font-size:0.875rem;">
+            {% if not msg.is_read %}<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#007BFF;margin-right:6px;"></span>{% endif %}
+            {{ msg.name }}
+          </div>
+          <div style="color:var(--muted);font-size:0.75rem;">{{ msg.email }}</div>
+        </td>
+        <td style="font-size:0.85rem;">{{ msg.subject|truncatechars:40 }}</td>
+        <td style="color:var(--muted);font-size:0.78rem;white-space:nowrap;">{{ msg.created_at|date:"M d, Y" }}<br><span style="font-size:0.72rem;">{{ msg.created_at|date:"H:i" }}</span></td>
+        <td>
+          {% if msg.is_archived %}<span class="badge-status badge-inactive">Archived</span>
+          {% elif not msg.is_read %}<span class="badge-status badge-unread-msg">Unread</span>
+          {% else %}<span class="badge-status badge-active">Read</span>{% endif %}
+        </td>
+        <td>
+          <div class="d-flex gap-1">
+            <a href="{% url 'portfolio:dashboard_message_detail' msg.pk %}" class="btn-sm-icon" title="View"><i class="bi bi-eye"></i></a>
+            <a href="mailto:{{ msg.email }}" class="btn-sm-icon" title="Reply"><i class="bi bi-reply"></i></a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:40px;">No messages found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

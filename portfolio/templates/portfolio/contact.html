@@ -1,0 +1,129 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container text-center">
+    <div class="section-label">Contact</div>
+    <h1 class="section-title fade-up">Let's <span>Work Together</span></h1>
+    <p class="fade-up" style="color:var(--text-secondary);max-width:480px;margin:0 auto;">Have a project in mind? I'd love to hear from you. Send me a message and let's create something amazing.</p>
+  </div>
+</section>
+
+<section style="padding:0 0 100px;">
+  <div class="container">
+    <div class="row g-5">
+
+      <!-- CONTACT INFO -->
+      <div class="col-lg-5 fade-up">
+        <div class="glass-card p-5 h-100">
+          <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">Contact Information</h2>
+          <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:36px;">Fill in the form and I'll get back to you as soon as possible.</p>
+
+          {% if contact_info %}
+          {% if contact_info.email %}
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="bi bi-envelope-fill"></i></div>
+            <div>
+              <div class="contact-info-label">Email</div>
+              <a href="mailto:{{ contact_info.email }}" class="contact-info-value" style="color:var(--text-primary)">{{ contact_info.email }}</a>
+            </div>
+          </div>
+          {% endif %}
+          {% if contact_info.phone %}
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="bi bi-telephone-fill"></i></div>
+            <div>
+              <div class="contact-info-label">Phone</div>
+              <a href="tel:{{ contact_info.phone }}" class="contact-info-value" style="color:var(--text-primary)">{{ contact_info.phone }}</a>
+            </div>
+          </div>
+          {% endif %}
+          {% if contact_info.address %}
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="bi bi-geo-alt-fill"></i></div>
+            <div>
+              <div class="contact-info-label">Location</div>
+              <div class="contact-info-value">{{ contact_info.address }}</div>
+            </div>
+          </div>
+          {% endif %}
+          {% else %}
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="bi bi-envelope-fill"></i></div>
+            <div>
+              <div class="contact-info-label">Email</div>
+              <div class="contact-info-value">dagimawi@example.com</div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div style="border-top:1px solid var(--border-glass);padding-top:28px;margin-top:8px;">
+            <div class="contact-info-label mb-3">Follow Me</div>
+            <div class="d-flex gap-2 flex-wrap">
+              {% for link in social_links %}
+              <a href="{{ link.url }}" target="_blank" rel="noopener" class="social-icon-link">
+                {% if link.platform == 'facebook' %}<i class="bi bi-facebook"></i>
+                {% elif link.platform == 'instagram' %}<i class="bi bi-instagram"></i>
+                {% elif link.platform == 'tiktok' %}<i class="bi bi-tiktok"></i>
+                {% elif link.platform == 'telegram' %}<i class="bi bi-telegram"></i>
+                {% elif link.platform == 'linkedin' %}<i class="bi bi-linkedin"></i>
+                {% elif link.platform == 'behance' %}<i class="bi bi-behance"></i>
+                {% elif link.platform == 'youtube' %}<i class="bi bi-youtube"></i>
+                {% else %}<i class="bi bi-link-45deg"></i>{% endif %}
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT FORM -->
+      <div class="col-lg-7 fade-up fade-up-delay-2">
+        <div class="glass-card p-5">
+          <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:24px;">Send a Message</h2>
+          {% if messages %}
+          {% for message in messages %}
+          <div class="mb-3 p-3 rounded" style="background:rgba(0,212,80,0.1);border:1px solid rgba(0,212,80,0.2);color:#00d450;">
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+          <form id="contact-form" method="post" action="{% url 'portfolio:contact' %}">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">Full Name *</label>
+                {{ form.name }}
+                {% if form.name.errors %}<div style="color:#ff5555;font-size:0.78rem;margin-top:4px;">{{ form.name.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">Email Address *</label>
+                {{ form.email }}
+                {% if form.email.errors %}<div style="color:#ff5555;font-size:0.78rem;margin-top:4px;">{{ form.email.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">Subject *</label>
+                {{ form.subject }}
+                {% if form.subject.errors %}<div style="color:#ff5555;font-size:0.78rem;margin-top:4px;">{{ form.subject.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">Message *</label>
+                {{ form.message }}
+                {% if form.message.errors %}<div style="color:#ff5555;font-size:0.78rem;margin-top:4px;">{{ form.message.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn-gradient w-100 d-flex align-items-center justify-content-center gap-2" style="padding:14px;">
+                  Send Message <i class="bi bi-send"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div id="form-message"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block title %}{{ work.title }} | Dagimawi Tarekegne{% endblock %}
+{% block content %}
+
+<section class="page-hero" style="padding-bottom:40px;">
+  <div class="container">
+    <div class="d-flex align-items-center gap-2 mb-3" style="color:var(--text-muted);font-size:0.85rem;">
+      <a href="{% url 'portfolio:home' %}" style="color:var(--text-muted)">Home</a>
+      <i class="bi bi-chevron-right" style="font-size:0.7rem"></i>
+      <a href="{% url 'portfolio:works' %}" style="color:var(--text-muted)">Works</a>
+      <i class="bi bi-chevron-right" style="font-size:0.7rem"></i>
+      <span style="color:var(--accent-blue)">{{ work.title }}</span>
+    </div>
+    <div class="row align-items-start g-5">
+      <div class="col-lg-8 fade-up">
+        {% if work.cover_image %}
+        <img src="{{ work.cover_image.url }}" alt="{{ work.title }}" style="width:100%;border-radius:var(--radius-lg);border:1px solid var(--border-glass);">
+        {% endif %}
+      </div>
+      <div class="col-lg-4 fade-up fade-up-delay-2">
+        <div class="glass-card p-4">
+          {% if work.category %}<div class="section-label mb-2">{{ work.category.name }}</div>{% endif %}
+          <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:16px;">{{ work.title }}</h1>
+          {% if work.description %}<p style="color:var(--text-secondary);line-height:1.8;margin-bottom:24px;">{{ work.description }}</p>{% endif %}
+          <div style="border-top:1px solid var(--border-glass);padding-top:20px;">
+            {% if work.created_at %}
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-calendar3" style="color:var(--accent-blue)"></i>
+              <span style="color:var(--text-secondary);font-size:0.85rem;">{{ work.created_at|date:"F Y" }}</span>
+            </div>
+            {% endif %}
+            {% if work.category %}
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-tag" style="color:var(--accent-blue)"></i>
+              <span style="color:var(--text-secondary);font-size:0.85rem;">{{ work.category.name }}</span>
+            </div>
+            {% endif %}
+          </div>
+          {% if work.video_url or work.video_file %}
+          <button class="btn-gradient w-100 mt-4 d-flex align-items-center justify-content-center gap-2"
+            data-video="{% if work.video_file %}{{ work.video_file.url }}{% else %}{{ work.video_url }}{% endif %}"
+            data-type="{% if work.video_file %}file{% else %}url{% endif %}">
+            <i class="bi bi-play-circle-fill"></i> Watch Video
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if gallery %}
+<section style="padding:60px 0 100px;">
+  <div class="container">
+    <h2 class="section-title mb-4 fade-up">Project <span>Gallery</span></h2>
+    <div class="row g-3">
+      {% for img in gallery %}
+      <div class="col-6 col-md-4 col-lg-3 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <a href="{{ img.image.url }}" data-lightbox="{{ img.image.url }}" data-alt="{{ img.caption }}" class="d-block" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border-glass);">
+          <img src="{{ img.image.url }}" alt="{{ img.caption }}" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;transition:transform 0.3s ease;">
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if related %}
+<section style="padding:0 0 100px;">
+  <div class="container">
+    <h2 class="section-title mb-4 fade-up">Related <span>Works</span></h2>
+    <div class="row g-4">
+      {% for w in related %}
+      <div class="col-md-6 col-lg-3 fade-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+        <a href="{% url 'portfolio:work_detail' w.pk %}" class="portfolio-card d-block text-decoration-none">
+          <div class="card-img-wrapper">
+            {% if w.cover_image %}<img src="{{ w.cover_image.url }}" alt="{{ w.title }}" loading="lazy">{% endif %}
+            <div class="card-overlay"><span class="btn-gradient px-4 py-2 rounded-pill">View</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{{ w.title }}</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
