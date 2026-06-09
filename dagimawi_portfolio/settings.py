@@ -89,10 +89,11 @@ EMAIL_BACKEND    = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST       = 'smtp.gmail.com'
 EMAIL_PORT       = 587
 EMAIL_USE_TLS    = True
-EMAIL_HOST_USER  = 'dagimawi10tare@gmail.com'    # Gmail address used to SEND
-EMAIL_HOST_PASSWORD = 'ujnk bbxr tdgj jshb'      # Gmail App Password (not your real password)
+EMAIL_HOST_USER  = 'dagicreativesupport@gmail.com'
+    # Gmail address used to SEND
+EMAIL_HOST_PASSWORD = 'tsly dfbm vzfz pmhs'      # Gmail App Password (not your real password)
 #                                                # Get one at: Google Account > Security > App Passwords
-DEFAULT_FROM_EMAIL = 'Dagimawi Portfolio <dagimawi10tare@gmail.com>'
+DEFAULT_FROM_EMAIL = 'Dagimawi Portfolio <dagicreativesupport@gmail.com>'
 #
 # The recipient email is read from ContactInfo.email in the database.
 # Set it in the custom dashboard under: Dashboard > Contact Info

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+ 
 
 admin.site.site_header = "Dagimawi Portfolio Admin"
 admin.site.site_title = "Portfolio Admin"
